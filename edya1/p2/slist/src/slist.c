@@ -2,6 +2,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// opereacion triviales 
+
+void slist_recorrer(Slist lista, FuncionVisitante visit) {
+    for (Snodo *nodo = lista; nodo != NULL; nodo = nodo->sig)
+      visit(nodo->dato);
+  }
+
+void imprime_int(int dato) {
+    printf("%d ", dato);
+}
+
+Slist slist_crear() {
+    return NULL;
+  }
+  
+
 // Creación y destrucción
 
 // Crea un nuevo nodo con el dato proporcionado.
@@ -13,19 +29,14 @@ Slist slist_crear_nodo(int in_data) {
 }
 
 // Libera toda la memoria ocupada por la lista.
-void slist_destruir(Slist* header) {
-    if(*header == NULL) {
-        return;
+void slist_destruir(Slist lista) {
+    Snodo *nodoAEliminar;
+    while (lista != NULL) {
+      nodoAEliminar = lista;
+      lista = lista->sig;
+      free(nodoAEliminar);
     }
-
-    Slist siguiente, actual = *header;
-    while(actual != NULL) {
-        siguiente = actual->sig;  // Guarda referencia al siguiente nodo.
-        free(actual);            // Libera el nodo actual.
-        actual = siguiente;      // Avanza al siguiente nodo.
-    }
-    *header = NULL;              // Deja el puntero a lista en NULL.
-}
+  }
 
 // Operaciones básicas
 
@@ -162,4 +173,38 @@ void slist_concatenar(Slist* list1, Slist list2) {
         current = current->sig;
     }
     current->sig = list2;  // Une list2 al final.
+}
+
+int mayor(int a, int b){
+    return a-b;
+}
+
+void slist_ordenar(Slist* lista, Comparador func) {
+    // Caso base lista vacia o con un solo elemento
+    if(lista == NULL || *lista == NULL || (*lista)->sig == NULL) {
+        return;
+    }
+
+    Slist actual = *lista;
+    Slist minimo = actual;
+    Slist prev_min = NULL; 
+    // Encontrar el nodo con el valor minimo
+    // siempre me estoy fijando un valor adelante de donde estoy parado
+    while(actual->sig != NULL) {
+        if(func(actual->sig->dato, minimo->dato) < 0) {
+            prev_min = actual;
+            minimo = actual->sig;
+        }
+        actual = actual->sig;
+    }
+
+    // Si el minimo no es el primero intercambia
+    if(minimo != (*lista)) {
+        prev_min->sig = minimo->sig;
+        minimo->sig = (*lista);  
+        (*lista) =  minimo;        
+    }
+
+    // recursion 
+    slist_ordenar(&((*lista)->sig), func);
 }
