@@ -179,6 +179,7 @@ int mayor(int a, int b){
     return a-b;
 }
 
+// ordena con selection sort
 void slist_ordenar(Slist* lista, Comparador func) {
     // Caso base lista vacia o con un solo elemento
     if(lista == NULL || *lista == NULL || (*lista)->sig == NULL) {
@@ -207,4 +208,29 @@ void slist_ordenar(Slist* lista, Comparador func) {
 
     // recursion 
     slist_ordenar(&((*lista)->sig), func);
+}
+
+// da vuelta la lista
+void slist_reverso(Slist* list) {
+    if (list == NULL || *list == NULL || (*list)->sig == NULL) {
+        return; // No hay nada que invertir
+    }
+    
+    Slist anterior = NULL;
+    Slist actual = *list;
+    Slist siguiente = NULL;
+    
+    // A->B->C->D-> NULL
+    while (actual != NULL) {
+        siguiente = actual->sig;
+        // NULL <- A | B->C->D-> NULL (1er ciclo)
+        // NULL <-A<-B|C->D-> NULL (2do ciclo)
+        actual->sig = anterior;  
+        
+        anterior = actual;   
+
+        actual = siguiente;      
+    }
+    
+    *list = anterior; 
 }
