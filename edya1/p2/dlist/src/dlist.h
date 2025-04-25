@@ -18,20 +18,24 @@ typedef enum {
 } DListOrdenDeRecorrido;  
 
 typedef void (*FuncionVisitante)(int);
-
+typedef int (*FuncionComparadora)(int, int);
 // funciones triviales
 int dlist_vaciayn(DList lista);
 DList dlist_crear();
-void dlist_destruir(DList lista);
-void dlist_recorrer(DList lista, FuncionVisitante funcion, DListOrdenDeRecorrido orden);
 void imprimir_int(int a);
-DList dlist_agregar_inicio(DList lista, int dato);
-DList dlist_agregar_final(DList lista, int dato);
 int dlist_longitud(DList lista);
-DList dlist_insertar(DList lista, int dato, int posicion);
-DList dlist_eliminar(DList lista, int posicion);
 int dlist_contiene(DList lista, int dato);
 int dlist_indice(DList lista, int dato);
+void dlist_destruir(DList lista);
+void dlist_recorrer(DList lista, FuncionVisitante funcion, DListOrdenDeRecorrido orden);
+
+// funciones basica
+DList dlist_agregar_inicio(DList lista, int dato);
+DList dlist_agregar_final(DList lista, int dato);
+DList dlist_insertar(DList lista, int dato, int posicion);
+DList dlist_eliminar(DList lista, int posicion);
 // funciones avanzadas
-void dlist_concatenar(DList* lista1, DList lista2);
+DList dlist_concatenar(DList lista1, DList lista2);
+DList dlist_intersecar(DList lista1, DList lista2);
+DList dlist_intersecar_custom(DList lista1, DList lista2, FuncionComparadora cmp);
 #endif

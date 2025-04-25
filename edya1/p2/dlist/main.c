@@ -5,12 +5,21 @@ int main(){
     // 1. Crear una lista vacía
     DList lista = dlist_crear();
     printf("Lista creada. ¿Está vacía? %s\n", dlist_vaciayn(lista) ? "Sí" : "No");
-
+    DList lista2 = dlist_crear();
+    
     // 2. Agregar elementos al inicio y al final
     lista = dlist_agregar_inicio(lista, 10);
     lista = dlist_agregar_final(lista, 20);
     lista = dlist_agregar_inicio(lista, 5);
+    
+    lista2 = dlist_agregar_final(lista2, 100);
+    lista2 = dlist_agregar_final(lista2, 200);
+    lista2 = dlist_agregar_inicio(lista2, 10);
+    
     printf("\nLista después de agregar 5, 10, 20:\n");
+    dlist_recorrer(lista, imprimir_int, DLIST_RECORRIDO_HACIA_ADELANTE);
+
+    printf("\nLista2 después de agregar 100, 200, 10:\n");
     dlist_recorrer(lista, imprimir_int, DLIST_RECORRIDO_HACIA_ADELANTE);
 
     // 3. Insertar en posición arbitraria
@@ -35,18 +44,20 @@ int main(){
 
     // 7. Probar longitud
     printf("\n\nLongitud de la lista: %d\n", dlist_longitud(lista));
-
-    // 8. Concatenar listas (función avanzada)
-    DList lista2 = dlist_crear();
-    lista2 = dlist_agregar_final(lista2, 100);
-    lista2 = dlist_agregar_final(lista2, 200);
     
-    dlist_concatenar(&lista, lista2);
-    printf("\nLista después de concatenar con [100, 200]:\n");
+    // 8. intersecar listas
+    DList inter1 = dlist_intersecar(lista, lista2);
+    printf("\nLista después de intersecar [10, 20, 5] y [100, 200, 10]:\n");
+    dlist_recorrer(inter1, imprimir_int, DLIST_RECORRIDO_HACIA_ADELANTE); 
+
+    // 9. Concatenar listas 
+    lista = dlist_concatenar(lista, lista2);
+    printf("\nLista después de concatenar con [100, 200, 10]:\n");
     dlist_recorrer(lista, imprimir_int, DLIST_RECORRIDO_HACIA_ADELANTE);
 
-    // 9. Destruir la lista
+    // 10. Destruir la lista
     dlist_destruir(lista);
+    dlist_destruir(inter1);
 
     printf("!!  %d  ¡¡", lista.primero->dato);
     printf("\nListas destruidas. ¿Está vacía la principal? %s\n", dlist_vaciayn(lista) ? "Sí" : "No");

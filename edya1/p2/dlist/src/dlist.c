@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// funciones comparadoras
+int mayor(int a, int b){
+    return a-b;
+}
+
 // funciones triviales
 
 int dlist_vaciayn(DList lista){
@@ -177,12 +182,56 @@ int dlist_indice(DList lista, int dato) {
 //funcione avanzadas
 
 // concatena dos listas
-void dlist_concatenar(DList* lista1, DList lista2){
-    if(lista1->primero == NULL) {
-        *lista1 = lista2;
-    } else if(lista2.primero != NULL) {
-        lista1->ultimo->sig = lista2.primero;
-        lista2.primero->ant = lista1->ultimo;
-        lista1->ultimo = lista2.ultimo;
+DList dlist_concatenar(DList lista1, DList lista2){
+    if(dlist_vaciayn(lista1)) {
+        return lista2;
+    }else if(dlist_vaciayn(lista2)){
+        return lista1;
     }
+    lista1.ultimo->sig = lista2.primero;
+    lista2.primero->ant = lista1.ultimo;
+    lista1.ultimo = lista2.ultimo;
+    return lista1;
+    
+}
+
+DList dlist_intersecar(DList lista1, DList lista2) {
+    DList resultado = dlist_crear();
+    
+    // Recorremos la primera lista
+    DNodo* actual = lista1.primero;
+    while (actual != NULL) {
+        int dato = actual->dato;
+        
+        // si el dato esta en la lista2 verifica si tmb esta en res
+        if (dlist_contiene(lista2, dato) && !dlist_contiene(resultado, dato)) {
+            resultado = dlist_agregar_final(resultado, dato);
+        }
+        
+        actual = actual->sig;
+    }
+    
+    return resultado; // sencillo
+}
+
+DList dlist_intersecar_custom(DList lista1, DList lista2, FuncionComparadora cmp) {
+    DList resultado = dlist_crear();
+    DNodo* nodo1 = lista1.primero;
+    
+    while(nodo1 != NULL) {
+        DNodo* nodo2 = lista2.primero;
+        int encontrado = 0;
+        
+        while(nodo2 != NULL && !encontrado) {
+            if(cmp(nodo1->dato, nodo2->dato) == 0) {
+                if(!dlist_contiene(resultado, nodo1->dato)) {
+                    resultado = dlist_agregar_final(resultado, nodo1->dato);
+                    encontrado = 1; // para terminar el bucle, al pedo seguir
+                }
+            }
+            nodo2 = nodo2->sig;
+        }
+        nodo1 = nodo1->sig;
+    }
+    return resultado;
 }
