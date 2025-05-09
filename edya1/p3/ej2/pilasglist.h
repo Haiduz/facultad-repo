@@ -4,14 +4,14 @@
 
 typedef GList Pila;
 
-//crea e inicializa una nueva pila vacıa con la capacidad dada
+//crea e inicializa una nueva pila con el valor ingresado
 Pila pila_crear(int); 
 
 //libera la memoria requerida para la pila.
 void pila_destruir(Pila); 
 
 //retorna 1 si la pila está vacı́a, y 0 en caso contrario.
-int pila_es_vacia(Pila);
+int pila_esvacia(Pila);
 
 //retorna el elemento que se encuentre en el tope de la pila, pero sin
 int pila_tope(Pila);

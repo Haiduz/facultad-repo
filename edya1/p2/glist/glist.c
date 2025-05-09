@@ -66,6 +66,6 @@ GList glist_eliminar_header(GList lista, FuncionDestructora destroy) {
   if (glist_vacia(lista)) return lista; 
   GNode* nodo_a_eliminar = lista;  
   lista = lista->next;             
-  free(nodo_a_eliminar);
+  destroy(nodo_a_eliminar);
   return lista; 
 }

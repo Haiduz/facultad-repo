@@ -22,7 +22,7 @@ void* int_copia(void* dato) {
     *copia = *original;
     return copia;
 }
-//crea e inicializa una nueva pila vacıa con la capacidad dada
+//crea e inicializa una nueva con el valor ingresado
 Pila pila_crear(int dato){
     // la pila resulta un puntero a una glist
     Pila p = NULL;
