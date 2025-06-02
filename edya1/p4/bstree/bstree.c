@@ -80,7 +80,104 @@ void bstree_recorrer(BSTree raiz, BSTreeRecorrido orden,
     if (orden == BTREE_RECORRIDO_POST)
       visita(raiz->dato, extra);
   }
+} 
+
+//Implemente una funci´on bstree eliminar que elimine, si es posible, 
+// un elemento del arbol. Debera
+//  garantizar que el ´arbol resultante sea nuevamente un ABB
+int es_hoja(BSTree nodo) {
+  return nodo->izq == NULL && nodo->der == NULL;
+}
+
+BSTree encontrar_minimo(BSTree nodo) {
+  if (nodo == NULL) return NULL;
+  
+  while (nodo->izq != NULL) {
+      nodo = nodo->izq;
+  }
+  
+  return nodo;
+}
+
+BSTree encontrar_maximo(BSTree nodo) {
+  if (nodo == NULL) return NULL;
+  
+  while (nodo->der != NULL) {
+      nodo = nodo->der;
+  }
+  
+  return nodo;
+}
+
+BSTree bstree_eliminar(BSTree arbol, void *dato, FuncionComparadora compara, FuncionDestructora destruye) {
+  // arbol vacio
+  if (arbol == NULL) return NULL;
+
+  int cmp = compara(dato, arbol->dato);
+  // truquiniii truquito
+  if (cmp < 0) {
+      arbol->izq = bstree_eliminar(arbol->izq, dato, compara, destruye);
+  } else if (cmp > 0) {
+      arbol->der = bstree_eliminar(arbol->der, dato, compara, destruye);
+  } else {
+    // estoy parado sobre el dato a eliminar
+      if (es_hoja(arbol)) {
+          destruye(arbol->dato);
+          free(arbol);
+          // vuelve a la llamada anterio de la linea 109 o 107 y reenlaza el padre a null
+          return NULL;
+      }
+
+      if (arbol->izq == NULL) {
+        // tiene un hijo a la derecha
+          BSTree temp = arbol->der;
+          destruye(arbol->dato);
+          free(arbol);
+          return temp;
+      } else if (arbol->der == NULL) {
+        // tiene un hijo a las izquierda  
+          BSTree temp = arbol->izq;
+          destruye(arbol->dato);
+          free(arbol);
+          return temp;
+      }
+      //tiene dos hijs
+      BSTree temp = encontrar_minimo(arbol->der);
+      // sobreescribo 
+      arbol->dato = temp->dato;
+      // realmente no se libera el nodo con el dato, pero al pisar la informacion con el min
+      // y luego liberar el repedito no se pierde memoria
+      arbol->der = bstree_eliminar(arbol->der, temp->dato, compara, destruye);
+  }
+
+  return arbol;
 }
 
 // hacer funcion que devuelva a direccion del nodo del dato
 // buscado, caso contrario NULL
+
+//Implemente bstree k esimo menor que retorne el 
+//k-ésimo menor elemento del ABB, con k parámetro.
+
+void* bstree_k_esimo_menor(BSTree arbol, int k, int* contador) {
+  if (arbol == NULL) return NULL;
+  
+  // Recorrer subarbol izquierdo
+  void* resultado = bstree_k_esimo_menor(arbol->izq, k, contador);
+  if (resultado != NULL) return resultado;
+  
+  // Visitar nodo actual (inorden)
+  (*contador)++;
+  if (*contador == k) return arbol->dato;
+  
+  // Recorrer subarbol derecho
+  return bstree_k_esimo_menor(arbol->der, k, contador);
+}
+
+
+// corregir maximos y minimos
+int bstree_validar(BSTree arbol, FuncionComparadora cmp){
+  if(arbol == NULL) return 1;
+  if(cmp(encontrar_maximo(arbol->izq), arbol->dato)<0 && cmp(encontrar_minimo(arbol->der), arbol->dato)>0) return 1;
+  return bstree_validar(arbol->izq, cmp) && bstree_validar(arbol->der, cmp);
+}

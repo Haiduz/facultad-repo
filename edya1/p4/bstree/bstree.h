@@ -38,7 +38,8 @@ BSTree bstree_insertar(BSTree, void *, FuncionCopiadora, FuncionComparadora);
 /**
  * Recorrido DSF del arbol
  */
-void bstree_recorrer(BSTree, BSTreeRecorrido, FuncionVisitanteExtra,
-                     void *extra);
+void bstree_recorrer(BSTree, BSTreeRecorrido, FuncionVisitanteExtra, void *extra);
+
+BSTree bstree_eliminar(BSTree arbol, void *dato, FuncionComparadora, FuncionDestructora);                     
 
 #endif //__BSTREE_H__
