@@ -176,8 +176,9 @@ void* bstree_k_esimo_menor(BSTree arbol, int k, int* contador) {
 
 
 // corregir maximos y minimos
-int bstree_validar(BSTree arbol, FuncionComparadora cmp){
-  if(arbol == NULL) return 1;
-  if(cmp(encontrar_maximo(arbol->izq), arbol->dato)<0 && cmp(encontrar_minimo(arbol->der), arbol->dato)>0) return 1;
-  return bstree_validar(arbol->izq, cmp) && bstree_validar(arbol->der, cmp);
+int bstree_validar(BSTree arbol, FuncionComparadora cmp, void* min, void* max) {
+  if (arbol == NULL) return 1;
+  if ((min != NULL && cmp(arbol->dato, min) <= 0) ||
+  (max != NULL && cmp(max, arbol->dato) <= 0))return 0;
+  return bstree_validar(arbol->izq, cmp, min, arbol->dato) && bstree_validar(arbol->der, cmp, arbol->dato, max);
 }
