@@ -217,7 +217,8 @@ static AVL_Nodo* avl_nodo_insertar(AVL_Nodo* raiz, void* dato,
     raiz->der = avl_nodo_insertar(raiz->der, dato, copia, comp);
   else // no agregar elementos repetidos
     return raiz;
-
+  // va actualizando la altura de todos los nodos a medida
+  // que vuelve en la recursin 
   raiz->altura = 1 + avl_nodo_max_altura_hijos(raiz);
 
   return avl_nodo_rebalancear(raiz);
@@ -247,26 +248,26 @@ static int avl_nodo_validar_abb(AVL_Nodo* raiz, void* min, void* max,
     if (max != NULL && comp(max, raiz->dato) <= 0)
       return 0;
     // y validar subarboles recursivamente
+
+    /* ATENCION!! en la llamada recursiva, cuando recorrde el subarbol 
+    izquierdo, toma como maximo el dato de la raiz, y analogo con el
+    subarbol derecho, toma como minimo el dato de la raiz
+    en ambos casos no toca el minimo si se recorre derecha y maximo 
+    cuando se recorre izquieda*/
     return (avl_nodo_validar_abb(raiz->izq, min, raiz->dato, comp) &&
       avl_nodo_validar_abb(raiz->der, raiz->dato, max, comp));
   }
 }
 static int avl_nodo_validar_altura_y_balance(AVL_Nodo* raiz) {
-  // si la raiz es vacia, retornar exitosamente
-  if (raiz == NULL)
-    return 1;
-  // sino, validar subarboles recursivamente
-  int ret1 = avl_nodo_validar_altura_y_balance(raiz->izq);
-  int ret2 = avl_nodo_validar_altura_y_balance(raiz->der);
-  if (ret1 && ret2) {
-    // si ambos subarboles son validos, validar altura y balance de raiz
-    int altura = 1 + avl_nodo_max_altura_hijos(raiz);
-    int balance = avl_nodo_factor_balance(raiz);
-    if ((raiz->altura == altura) && (balance >= -1) && (balance <= 1))
-      return 1;
-  }
-  // en cualquier otro caso, retornar falso
-  return 0;
+  if (raiz == NULL) return 1;
+  
+  if (!avl_nodo_validar_altura_y_balance(raiz->izq)) return 0;
+  if (!avl_nodo_validar_altura_y_balance(raiz->der)) return 0;
+  
+  int altura = 1 + avl_nodo_max_altura_hijos(raiz);
+  int balance = avl_nodo_factor_balance(raiz);
+  
+  return (raiz->altura == altura) && (balance >= -1) && (balance <= 1);
 }
 int avl_validar(AVL arbol) {
   return (avl_nodo_validar_altura_y_balance(arbol->raiz) &&
@@ -297,10 +298,10 @@ void avl_recorrer(AVL arbol, AVLRecorrido orden, FuncionVisitanteExtra visita,
 /**
  * avl_nodo_menor: Devuelve el nodo con el menor dato del árbol.
  */
-static AVL_Nodo *avl_nodo_menor(AVL_Nodo *raiz) {
-  /* COMPLETAR */
-  (void) raiz; // para silenciar error de parmámetro sin usar.
-  assert(0);
+static AVL_Nodo* avl_nodo_menor(AVL_Nodo* raiz) {
+  // OBS: sioso la raiz va a tener dos hijos en la primera llamada
+  if (raiz == NULL || raiz->izq == NULL) return raiz;
+  return avl_nodo_menor(raiz->izq);
 }
 
 /**
@@ -321,22 +322,28 @@ static AVL_Nodo* avl_nodo_eliminar(AVL_Nodo* raiz, void* dato,
   else { // el dato está en el nodo actual
     if (raiz->izq == NULL || raiz->der == NULL) { // el nodo a eliminar es una hoja o
                                                   // tiene exactamente un hijo
-      AVL_Nodo *sucesor = raiz->izq == NULL ? raiz->der : raiz->izq;
+      AVL_Nodo *sucesor = (raiz->izq == NULL )? raiz->der : raiz->izq;
       destr(raiz->dato);
       free(raiz);
-      return sucesor; // no es necesario rebalancear en este caso
-    } else { // el nodo a eliminar tiene dos hijos.
+      // caso que tenga un hijo, lo toma, borra el padrey devuelve el hijo
+      // en la recursion se va a enlazar con el abuelo
+      return sucesor; // no es necesario rebalancear en este caso pues
+      // el padre no tendra hijos o tendra
+    } else { // el nodo a eliminar tiene dos hijos
+      // agarra el mas chico del subarbol derecho
       AVL_Nodo *menor = avl_nodo_menor(raiz->der);
-      // reemplazamos el dato del nodo a eliminar con el dato del nodo del sucesor
-      // in-order en el subárbol derecho.
-      /* COMPLETAR */
-      (void) menor; // para silenciar error de variable sin usar.
-      assert(0);
+      
+      // Reemplazar el dato del nodo actual con el dato del sucesor in-order
+      destr(raiz->dato); // Liberar el dato actual
+      raiz->dato = menor->dato; // Copiar el dato del sucesor
+      
+      // Eliminar el sucesor in-order del subárbol derecho
+      raiz->der = avl_nodo_eliminar(raiz->der, menor->dato, destr, comp);
     }
   }
 
+  // Actualizar altura y rebalancear a medida que vuelve la recursion
   raiz->altura = 1 + avl_nodo_max_altura_hijos(raiz);
-
   return avl_nodo_rebalancear(raiz);
 }
 void avl_eliminar(AVL arbol, void* dato) {
