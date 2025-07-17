@@ -62,12 +62,11 @@ void btree_traverse(BTree root, TRAVERSE_ORDER order) {
             break;
             
         case BFS:
-            // Implementación de BFS con colas
-            Stack stack_bfs = stack_create(root.copy, root.cmp, root.destroy, root.visit);
-            stack_bfs = push(stack_bfs, root.node->data);
-            while(!stack_empty(stack_bfs)){
-                
-            }
+            // Implementación de BFS con colas, revisar si esta encolando y desecolando bien, ten en cuenta que 
+            // en tu implemantacion de que y dlist, las funciones vienen encapsuladas asiq tenes que cambiar el tema del
+            // crear queues y stacks, pasar parametros correctamente a crea Dlist
+            Queue q_bfs = queue_create(root.copy, root.cmp, root.destroy, root.visit);
+            q_bfs = enqueue(q_bfs, root.node);
             break;
     }
 }

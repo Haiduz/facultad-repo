@@ -106,6 +106,15 @@ void* peek(Stack stack) {
 
 /* DEFINICIONES QUEUE */
 
+Queue queue_create(FuncionCopiadora copy, FuncionComparadora cmp, FuncionDestructora destroy, FuncionVisitante visit){
+    Queue new_queue = { NULL, NULL, copy, cmp, destroy, visit};
+    return new_queue;
+}
+
+int queue_empty(Stack queue){
+    return queue.first == NULL;
+}
+
 Queue enqueue(Queue queue, void* in_data){
     return dlist_insert(queue, in_data);
 }

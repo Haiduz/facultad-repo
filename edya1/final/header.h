@@ -45,6 +45,8 @@ void* peek(Stack stack);
 
 typedef Dlist Queue;
 
+Queue queue_create(FuncionCopiadora copy, FuncionComparadora cmp, FuncionDestructora destroy, FuncionVisitante visit);
+int queue_empty(Stack queue);
 Queue enqueue(Queue queue, void* in_data);
 void* dequeue(Queue* queue);
 
