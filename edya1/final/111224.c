@@ -110,6 +110,11 @@ void tabla_eliminar(TablaHash tabla, char* del_palabra){
     
 }
 
+// para contar ocurrencias de un caracter dado puede convenir hacer directamentte un arreglo de 26 elementos e ir poniendo ahi
+// pero suponagamos que en algun momento nos piden un arreglo que pide la ocurrencia de numeros, 
+// seria lo mismo, aprovechariamos nuestra tabla hash y creariamos otra almacenando directamente los caracteres, aseguandonos que 
+// 'a' y 'A' hasheen los mismo
+
 int main(){
     int a = hash("abc\0");
     printf(" %d \n", a);
@@ -121,3 +126,5 @@ int main(){
     lista = slist_eliminar(lista, "mama\0");
     printf(" %d \n", slist_buscar(lista, "mama\0"));
 }
+
+// no estoy satisfecho

@@ -9,7 +9,7 @@ typedef void *(*FuncionCopiadora)(void *dato);
 typedef int (*FuncionComparadora)(void *, void *);
 typedef void (*FuncionDestructora)(void *dato);
 typedef void (*FuncionVisitante)(void *dato);
-
+typedef unsigned (*FuncionHash)(void *dato);
 /* Estructura de lista */
 // OBS: se hace simplemente enlazada porque se implementara como pila y cola
 
@@ -92,5 +92,28 @@ int btree_nnodes(BTree root);
 int btree_find(BTree root, void* find_data);
 int btree_deep(BTree root);
 int btree_nnodes_deep(BTree root,int deep,int current_deep);
+
+typedef struct _HashSlot
+{
+    void* data;
+    int deleted;
+}_HashSlot;
+
+typedef _HashSlot* HashSlot;
+
+typedef struct _Hashtable
+{
+    HashSlot* elements;
+    int capacity;
+    int occupied;
+    FuncionCopiadora copy;
+    FuncionComparadora cmp;
+    FuncionDestructora destroy;
+    FuncionVisitante visit; 
+    FuncionHash hash;
+}_Hashtable;
+
+typedef _Hashtable* Hashtable;
+
 
 #endif /* STRUCTS_H */
