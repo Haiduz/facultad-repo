@@ -1,0 +1,32 @@
+as --noexecstack ej1.s -o ej1.o
+gcc ej1.o -o ej1
+
+a- el codigo esta ejecutado en dos pasos, el primero ensambla y el segundo compila, tiene prendida la 
+bandera --noexecstack pues este genera un warning. 
+
+    - El stack ejecutable es sección de memoria del programa en lenguaje ensamblador que se utiliza para 
+    almacenar datos de ejecución temporal, como variables locales y direcciones de retorno de funciones.
+
+b- tenemos que 0xff = 255 y %al es un subregistro con 8 bits, si es signed tenemos overflow
+pues esta representado en complemento a dos, si intentamos mostrarlo en signed nos da -1, q signed
+es el por defecto cuando imprimimos el valor de una variable en gbd
+
+se veria algo asi 
+
+(gdb) break main
+(gdb) run
+(gdb) stepi ## hace linea por linea el programa en assembly
+
+# Después de movb $0xFF, %al
+
+(gdb) print /x $al
+$1 = 0xff
+
+(gdb) print /u $al  
+$2 = 255
+
+(gdb) print /d $al
+$3 = -1
+
+(gdb) info registers rax
+rax            0xff     255
