@@ -4,4 +4,3 @@ main
 *.exe
 /a.out
 .vscode/
-so1/varios/*[!.]*
