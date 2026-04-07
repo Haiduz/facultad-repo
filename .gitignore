@@ -4,3 +4,4 @@ main
 *.exe
 /a.out
 .vscode/
+[!.]*
