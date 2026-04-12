@@ -27,4 +27,36 @@ con null sigue con el resutado anterior
 luego preparo el arreglo de argumentos
 
 por ultimo creo un proceso hijo y en el ejecuto los comandos
-con exec, el padre solamente espera
+con exec, el padre solamente espera q el hijo termino
+
+En el ejercicio pide que redirija la salida al un archivo .txt
+para hacer eso uso dup2 que redirige la salida del STDOUT_FILENO
+al archivo .txt. Basicamente ademas de dirigir la salida y escribir en 
+consola tambien lo hace en el fd de out.txt
+
+open usa writeonly O_WRONLY y O_CREAT. dos bandera que permite escribir y modificar/crear un archivo en caso de que no este creado 
+
+La ultima modificacion es hacer que la minishell acepte varios comandos
+de la forma c1 | c2 | ... | cn donde la salida del comando anterior sea la entrada del comando siguiente. Para esto usamos int pipe(int pipe(2))
+
+Luego de parsear todo, esta vez en arreglos bidimensionales. Para hacer esta pipeline seguimos la siguiente logica:
+
+El parser nos determina cuantos comandos hay, entonces ya sabemos cuantos procesos distintos vamos a tener que hacer. 
+
+La complejidad del ejercicio es poder conectar bien las pipes y entender como escribir y ejecutar comandos hijos redireccionando la salida.
+
+Yo opte por un enfoque usando dos pipes. La pipe al anterior proceso prev_pipe y al siguiente next_pipe. Donde, si no soy el primer proceso, leo la prev_pipe. Y si no soy el ultimo proceso escribo en la next_pipe.
+
+El kernel automaticamente conecta lo leido en STDIN_FILENO y lo conecta con el comando a ejecutar en 
+execvp(cmd_args[i][0], cmd_args[i]) 
+No comprendo bien porque pero lo toma como argumento (PREGUNTAR)
+
+OBS: Al hacer dup2 y redirigir tanto la salida como entrada estandar por la pipe, al ejecutar la instruccion exec. Una caracteristica de la misma es que mantiene los file descrpitors, entonces aunque se reemplace el marco en el que esta, el programa "RECUERDA" a que file descriptors tiene que escribir su salida. (PREGUNTAR)
+
+Notar que todos los procesos hijos "mueren" dentro del for, es decir, dentro de cada iteracion del for se hace un fork() donde:
+
+1) El hijo setea las pipes y ejecuta un comando y "muere"
+
+2) El padre actualiza la pipes (next pipe => prev pipe) pues este proceso se seguira ejectando. No "muere" dentro del for, sino que pasa a la siguiente iteracion y crea un nuevo hijo. 
+
+Desde cierta persecptiva el programa tiene un unico proceso "PADRE" y tantos proceso "HERMANOS" como comandos haya. Cada hermano nunca sale del for pues por el exec cambia su marco

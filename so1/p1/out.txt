@@ -1,0 +1,6 @@
+total 44
+-rwxrwxr-x 1 haiduz haiduz 16048 Apr  8 19:02 a.out
+-rwxrwxr-x 1 haiduz haiduz 16632 Apr  9 12:42 minishell
+-rw-rw-r-- 1 haiduz haiduz  1468 Apr  9 12:42 minishell.c
+-rw-rw-r-- 1 haiduz haiduz  1198 Apr  9 11:50 minishell.md
+-rw-r--r-- 1 haiduz haiduz     0 Apr  9 12:39 out.txt
