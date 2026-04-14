@@ -1,29 +1,24 @@
-#include <stdio.h>
-#include <signal.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <string.h>
+#include<stdio.h>
+#include<signal.h>
+#include<stdlib.h>
+#include<unistd.h>
+void INThandler(int);
 
-/*
-    #include <signal.h>
-
-struct sigaction {
-    void     (*sa_handler)(int);   // Manejador o SIG_IGN/SIG_DFL
-    void     (*sa_sigaction)(int, siginfo_t *, void *); // Manejador avanzado
-    sigset_t   sa_mask;            // Señales a bloquear durante el handler
-    int        sa_flags;           // Opciones de comportamiento
-    void     (*sa_restorer)(void); // Obsoleto, no usar
-};
-
-int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
-*/
-
-int main(){
-    pid_t pid = getpid();
-    printf("%d\n",pid);
-    raise(SIGSTOP); // ya por defecto para la ejecucion sin necesidad de handler
-    printf("Tocaste fg arranco de vuelta\n");    
+int main(void)
+{
+    signal(SIGINT, INThandler);
+    while (1)sleep(10);
+}
+void INThandler(int sig)
+{
+    char c;
     
-    return 0;
+    printf("OUCH, did you hit Ctrl-C?\n"
+    "Do you really want to quit? [y/n] ");
+    c = getchar();
+    if (c == 'y' || c == 'Y')
+        exit(0);
+    else
+        signal(sig, INThandler);
+    getchar();
 }
