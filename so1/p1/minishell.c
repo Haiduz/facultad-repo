@@ -48,17 +48,23 @@ void loop(char* buff){
                 break;
             case 0: 
             // caso hijo
+
+
                 if(i>0){
                 } // si no soy el primer comando -> leo la pipe del proc ant y cierro pipes antes de ejecutar
                     dup2(prev_pipe[0], STDIN_FILENO);
                     close(prev_pipe[1]);
                     close(prev_pipe[0]);
+
+
                 if(i<cmd_idx-1){
                 }// si no soy el ultimo comando -> escribo en la prox pipe y cierro pipes antes de ejecutar
                     dup2(next_pipe[1],STDOUT_FILENO);
                     close(next_pipe[1]);
                     close(next_pipe[0]);
-                execvp(cmd_args[i][0], cmd_args[i]);
+
+
+                execvp(cmd_args[i][0], cmd_args[i]); // [["ls","l"]["sort","-r"]]
             default:
             // caso padre, cierro las pipes que ya no se usan
                 if (i > 0) { // si no soy el primero cierro las pipes anteriores

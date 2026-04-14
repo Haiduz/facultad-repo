@@ -51,7 +51,11 @@ El kernel automaticamente conecta lo leido en STDIN_FILENO y lo conecta con el c
 execvp(cmd_args[i][0], cmd_args[i]) 
 No comprendo bien porque pero lo toma como argumento (PREGUNTAR)
 
+RTA: lo que sucede es que STDIN_FILENO es la entrada estandar, entonces toma como "escrito en consola" a lo leido por la pipe, que resulta los parametros de la funcion a ejecutar, esto sucede por defecto. Mas aun funciones como sort esperan parametros para ordenar, entonces con mas razon tiene sentido que se escriba despues de los comandos a ejecutar
+
 OBS: Al hacer dup2 y redirigir tanto la salida como entrada estandar por la pipe, al ejecutar la instruccion exec. Una caracteristica de la misma es que mantiene los file descrpitors, entonces aunque se reemplace el marco en el que esta, el programa "RECUERDA" a que file descriptors tiene que escribir su salida. (PREGUNTAR)
+
+RTA: SI, si cambio los files descriptors y despues hago un exec estos se mantiene excepto que el programa a ejecutar puntualmente vuelva a cambiarlos 
 
 Notar que todos los procesos hijos "mueren" dentro del for, es decir, dentro de cada iteracion del for se hace un fork() donde:
 
